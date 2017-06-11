@@ -4,7 +4,7 @@
   "description": "Module skeleton for ES6 & React",
   "main": "lib/library.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --optimize-minimize -p --output-filename lib/library.min.js",
+    "build": "NODE_ENV=production webpack --optimize-minimize -p --output-filename library.min.js",
     "dev": "webpack --progress --colors --watch"
   },
   "devDependencies": {
