@@ -1,3 +1,3 @@
-# Module skeleton for ES6 & React
+# smpl react table
 
-Webpack based boilerplate for producing libraries (Input: ES6, Output: universal library)
+React based component for displaying data.

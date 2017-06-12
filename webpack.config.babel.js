@@ -1,14 +1,13 @@
-/* global __dirname, require, module*/
 import Webpack from 'webpack'
 import path from 'path'
 
-let libraryName = 'library';
+let libraryName = 'react-table';
 let plugins = [], outputFile;
 
 outputFile = libraryName + '.js';
 
 export default {
-  entry: __dirname + '/src/'+libraryName+'.js',
+  entry: __dirname + '/src/library.js',
   devtool: 'source-map',
   output: {
     path: __dirname + '/lib',
@@ -30,7 +29,7 @@ export default {
     modules: [path.resolve('./src'), path.join(__dirname, 'node_modules')],
   },
   externals: {
-    react: 'react',
+    'react': 'react',
     'prop-types': 'prop-types'
   },
   plugins: []

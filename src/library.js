@@ -1,38 +1,109 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-export default class InputDigit extends React.Component {
+export default class Table extends React.Component {
+
+    // Lifecycle Methods
 
     static propTypes = {
-        min: PropTypes.number,
-        max: PropTypes.number,
-        quantity: PropTypes.number,
-        className: PropTypes.string,
-
-        onChange: PropTypes.func.isRequired
+        columns: PropTypes.arrayOf(PropTypes.object).isRequired,
+        rows: PropTypes.array.isRequired,
+        onRowChange: PropTypes.func,
+        changeTrigger: PropTypes.oneOf(['focus', 'rowFocus']),
+        className: PropTypes.string
     }
 
     state = {
-        quantity: this.props.quantity || 0
+        // Column format: {name: '', field: '', isFilterable: True, isSortable: True, background: '#FFFFF', editable: 'text/dropdown'}
+        meta: this.props.columns,
+        data: this.props.rows
     }
 
     constructor(p) {
         super(p)
     }
 
-    componentWillReceiveProps = () => { }
+    componentWillReceiveProps = () => {}
 
-    componentDidMount = () => { }
+    componentDidMount = () => {}
 
-    componentWillUnmount = () => { }
+    componentWillUnmount = () => {}
+
+
+    // Data manipulation
+
 
     render() {
         return (
-            <div className={'mnml-input-digit-container ' + this.props.className}>
-                <i className='fa fa-minus decrease' />
-                <span>{this.state.quantity}</span>
-                <i className='fa fa-plus increase' />
-            </div>
+            <table className={this.props.className}>
+                <TabularDataHeader />
+                {/*<TabularDataBody />*/}
+            </table>
+        )
+    }
+
+
+}
+
+class TabularDataHeader extends React.Component {
+
+    constructor(props, context) {
+        super(props, context)
+    }
+
+    render = () => {
+        return (
+            <thead>
+
+            </thead>
         )
     }
 }
+
+class TabularDataBody extends React.Component {
+
+    constructor(props, context) {
+        super(props, context)
+    }
+
+    render = () => {
+        return (
+            <tbody>
+
+            </tbody>
+        )
+    }
+}
+
+class TabularDataRow extends React.Component {
+
+    constructor(props, context) {
+        super(props, context)
+    }
+
+    render = () => {
+        return (
+            <tr>
+
+            </tr>
+        )
+    }
+
+}
+
+class TabularDataCell extends React.Component {
+
+    constructor(props, context) {
+        super(props, context)
+    }
+
+    render = () => {
+        return (
+            <td>
+
+            </td>
+        )
+    }
+
+}
+
