@@ -29,8 +29,11 @@ export default {
     modules: [path.resolve('./src'), path.join(__dirname, 'node_modules')],
   },
   externals: {
-    'react': 'react',
-    'prop-types': 'prop-types'
+    react: 'react',
+    'prop-types': 'prop-types',
+    'file-saver': 'file-saver',
+    'xlsx': 'xlsx'
+
   },
   plugins: []
 };
