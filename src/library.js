@@ -68,7 +68,7 @@ export default class Table extends React.Component {
     change = (index, row) => {
         let rows = this.state.rows
         let sel = this.state.selected
-        console.log(index)
+        console.log('Changing index', index)
         rows[index] = Object.assign(rows[index], row)
         rows[index]['delta'] = Object.assign({}, rows[index]['delta'], row)
         if (rows[index]['delta'].selected) delete rows[index]['delta']['selected']
@@ -76,8 +76,8 @@ export default class Table extends React.Component {
             sel += row.selected ? 1 : -1
         }
         let x = Date.now()
-        this.setState({ rows: update(this.state.rows, {index: {$set: rows[index]}}), selected: sel }, function() { console.log('Updated inx', (Date.now() - x) / 1000) })
-
+        this.setState({ rows: update(this.state.rows, {index: {$set: rows[index]}}), selected: sel }, () => console.log('Updated index', (Date.now() - x) / 1000))
+        console.log('Edited Row', index, rows[index])
         // if (this.props.onRowChange) this.props.onRowChange(row)
     }
 
@@ -289,7 +289,7 @@ class TableRow extends React.Component {
 
     constructor(p) {
         super(p)
-        this.state = p.row
+        this.state = p.row || null
     }
 
     shouldComponentUpdate = (p) => {
@@ -297,7 +297,11 @@ class TableRow extends React.Component {
     }
 
     componentWillReceiveProps = (p) => {
-        this.setState(p.row)
+
+        if (p.row && p.row.delta && p.index == this.props.index)  {
+            this.setState(p.row)
+            this.forceUpdate()
+        }
     }
 
     onRowUpdate = e => {
@@ -326,15 +330,15 @@ class TableRow extends React.Component {
                     let v = c.field instanceof Array ? c.field.reduce((p, c) => p[c], this.state) : this.state[c.field]
 
                     v = (c.formatters || []).reduce((p, x) => x(this.props.row), v)
-
+                    let t = c.alt && c.alt(this.props.row)
                     return (
                         c.isEditable ?
                             (c.choices ?
                                 <EditableTableCellDropdown updateOnBlur={this.props.updateOnBlur} key={`${this.props.id}-${c.field}`} id={`${this.props.id}-${c.field}`} column={c} onChange={this.onChange} data={v} /> :
                                 c.checkbox ?
                                     <EditableTableCellCheckbox updateOnBlur={this.props.updateOnBlur} key={`${this.props.id}-${c.field}`} id={`${this.props.id}-${c.field}`} column={c} onChange={this.onChange} data={v} /> :
-                                    <EditableTableCellText updateOnBlur={this.props.updateOnBlur} key={`${this.props.id}-${c.field}`} id={`${this.props.id}-${c.field}`} column={c} data={v} onChange={this.onChange} />) :
-                            <TableCell updateOnBlur={this.props.updateOnBlur} key={`${this.props.id}-${c.field}`} id={`${this.props.id}-${c.field}`} column={c} data={v} row={this.props.row} />
+                                    <EditableTableCellText updateOnBlur={this.props.updateOnBlur} key={`${this.props.id}-${c.field}`} id={`${this.props.id}-${c.field}`} column={c} data={v} onChange={this.onChange} title={t} />) :
+                            <TableCell updateOnBlur={this.props.updateOnBlur} key={`${this.props.id}-${c.field}`} id={`${this.props.id}-${c.field}`} column={c} data={v} row={this.props.row} title={t} />
                     )
                 })}
                 {this.props.hasRowUpdate && this.props.row.delta ? <td className='vertical-align-middle' style={{ borderBottom: 0 }}><button type='button' className='button-success margin-bottom-none'>✔</button></td> : null}
@@ -351,9 +355,8 @@ class TableCell extends React.Component {
     }
 
     render = () => {
-        // let v = (this.props.column.formatters || []).reduce((p, c) => c(this.props.row), this.props.data)
         return (
-            <td style={this.props.column.style}>
+            <td style={this.props.column.style} title={this.props.title || ''}>
                 {this.props.data}
             </td>
         )
@@ -395,8 +398,8 @@ class EditableTableCellText extends React.Component {
 
     render = () => {
         return (
-            <td style={this.props.column.style}>
-                <input className='u-full-width' type='text' value={this.state.value} onChange={this.props.updateOnBlur ? this.onLocalChange : this.onChange} onBlur={this.props.updateOnBlur ? this.onChange : null} />
+            <td style={this.props.column.style} title={this.props.title}>
+                <input className='u-full-width' type='text' title={this.props.title} value={this.state.value} onChange={this.props.updateOnBlur ? this.onLocalChange : this.onChange} onBlur={this.props.updateOnBlur ? this.onChange : null} />
             </td>
         )
     }
@@ -423,6 +426,10 @@ class EditableTableCellDropdown extends React.Component {
         this.props.onChange(this.props.column, e.target.value)
     }
 
+    componentWillReceiveProps = p => {
+        if (this.props.data != p.data) this.setState({ value: p.data })
+    }
+
     render = () => {
         return (
             <td style={this.props.column.style}>
@@ -446,8 +453,8 @@ class EditableTableCellCheckbox extends React.Component {
         super(p)
     }
 
-    componentWillReceiveProps(p) {
-        this.setState({ value: p.data })
+    componentWillReceiveProps = p => {
+        if (this.props.data != p.data) this.setState({ value: p.data })
     }
 
     onLocalChange = e => {
