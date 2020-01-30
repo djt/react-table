@@ -18,7 +18,8 @@ export default class Table extends React.Component {
         collapsed: PropTypes.any,
         isFilterable: PropTypes.bool,
         isMassEditable: PropTypes.bool,
-        updateOnBlur: PropTypes.bool
+        updateOnBlur: PropTypes.bool,
+        primary: PropTypes.string
     }
 
     state = {
@@ -27,7 +28,8 @@ export default class Table extends React.Component {
         rows: this.props.rows,
         sortColumn: null,
         collapsed: this.props.collapsed || false,
-        selected: 0
+        selected: 0,
+        primary: this.props.primary
     }
 
     constructor(p) {
@@ -37,11 +39,11 @@ export default class Table extends React.Component {
     componentWillReceiveProps = (p) => {
         let columns = p.columns
         if (!columns && p.rows) columns = Object.keys(p.rows[0]).map(c => ({ name: c, field: c }))
-        let pk = columns.find(c => c.isPrimary)
+        let pk = p.primary || columns.find(c => c.isPrimary)
         this.setState({
             columns: columns,
             rows: p.rows,
-            primaryKey: pk ? pk.field : null,
+            primaryKey: pk ? pk.field || pk : null,
         })
     }
 
