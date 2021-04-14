@@ -100,8 +100,12 @@ export default class Table extends React.Component {
             // if (c.excelToRaw) {
             //     p[c.name] = r[c.field]
             // } else
-            if (c.field instanceof Array) {
+            if (c.ignore) {
+                
+            } else if (c.field instanceof Array) {
                 p[c.name] = c.field.reduce((p, x) => p[x], r)
+            } else if (c.field instanceof Function) {
+                p[c.name] = c.field(r)
             } else {
                 p[c.name] = r[c.field] // (c.formatters || []).reduce((p, x) => x(r, true), r[c.field])
             }
